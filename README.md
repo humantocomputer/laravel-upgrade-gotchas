@@ -18,6 +18,7 @@ Ce skill permet à Claude de connaître ces pièges **avant** d'écrire du code,
 | Pest / PHPUnit | 2→4 / 10→12 | `pest-phpunit-migration.md` |
 | Filament | 3 → 4 → 5 | `filament-migration.md` |
 | Tailwind CSS | 3 → 4 | `tailwind-migration.md` |
+| **Audit de projet** | Toutes versions | `project-audit.md` |
 
 ### Tableau de compatibilité
 
@@ -42,6 +43,23 @@ git clone git@github.com:humantocomputer/laravel-upgrade-gotchas.git .claude/ski
 
 Le skill est automatiquement détecté par Claude Code au prochain lancement.
 
+## Structure
+
+```
+laravel-upgrade-gotchas/
+├── SKILL.md                                  # Point d'entrée — matrice de décision + règles
+└── references/
+    ├── project-audit.md                      # Audit : détection des vestiges par grep/scan
+    ├── laravel-10-to-11.md                   # Providers, Kernel, rate limiting, auto-discovery
+    ├── laravel-11-to-12.md                   # Carbon 3, container, UUIDs, Storage, Schema
+    ├── laravel-12-to-13.md                   # Events, CSRF, cache, pagination, job serialisation
+    ├── carbon-3-migration.md                 # diffIn* float, UTC, CarbonInterval
+    ├── livewire-3-to-4.md                    # wire:model, tags, navigate, transitions
+    ├── pest-phpunit-migration.md             # Pest 2→4, PHPUnit 10→12, annotations
+    ├── filament-migration.md                 # v3→v5, Grid 1 col, filters, S3 private
+    └── tailwind-migration.md                 # Config CSS, opacity, gradients, dark mode
+```
+
 ## Audit de projet
 
 Quand Claude arrive sur un nouveau projet Laravel, il ne connaît pas l'historique de migration. Le skill inclut un **audit automatique** (`references/project-audit.md`) qui scanne le code pour détecter les vestiges d'anciennes versions :
@@ -59,18 +77,17 @@ Le skill s'active automatiquement quand Claude :
 
 - **Arrive sur un nouveau projet Laravel** (audit des vestiges)
 - Touche à :
-
-- Events, listeners, service providers
-- Middleware, CSRF
-- Sessions, cache, cookies, config Redis
-- Eloquent (casts, boot, UUIDs, sérialisation)
-- Carbon (dates, diff, timestamps)
-- Validation, routing, queues/jobs
-- Livewire (wire:model, wire:navigate, transitions)
-- Tests Pest/PHPUnit
-- Filament forms/tables
-- Tailwind CSS (opacité, gradients, dark mode, config)
-- Migration entre versions
+  - Events, listeners, service providers
+  - Middleware, CSRF
+  - Sessions, cache, cookies, config Redis
+  - Eloquent (casts, boot, UUIDs, sérialisation)
+  - Carbon (dates, diff, timestamps)
+  - Validation, routing, queues/jobs
+  - Livewire (wire:model, wire:navigate, transitions)
+  - Tests Pest/PHPUnit
+  - Filament forms/tables
+  - Tailwind CSS (opacité, gradients, dark mode, config)
+  - Migration entre versions
 
 ## Exemples de pièges couverts
 
