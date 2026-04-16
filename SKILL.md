@@ -1,6 +1,6 @@
 ---
 name: laravel-upgrade-gotchas
-description: "Pièges et changements de comportement entre versions Laravel (10→11→12→13), Carbon 2→3, Livewire 3→4, Pest 2→4, Filament 3→5, Tailwind 3→4. TOUJOURS invoquer ce skill quand on touche à : events/listeners, service providers, middleware, sessions/cache/cookies, Eloquent casts/boot/UUID, Carbon dates (diffIn*, createFromTimestamp), validation rules, routing, queues/jobs, Livewire wire:model, tests Pest/PHPUnit, Filament forms/tables, classes Tailwind CSS (opacité, gradients, dark mode, config). Aussi quand on supprime ou modifie des fichiers de config (cache.php, session.php, tailwind.config.js), ou qu'on migre entre versions. Invoquer même en cas de doute — mieux vaut vérifier que de casser silencieusement."
+description: "Pièges et changements de comportement entre versions Laravel (10→11→12→13), Carbon 2→3, Livewire 3→4, Pest 2→4, Filament 3→5, Tailwind 3→4. TOUJOURS invoquer ce skill quand on : arrive sur un nouveau projet Laravel (audit des vestiges), touche à events/listeners, service providers, middleware, sessions/cache/cookies, Eloquent casts/boot/UUID, Carbon dates (diffIn*, createFromTimestamp), validation rules, routing, queues/jobs, Livewire wire:model, tests Pest/PHPUnit, Filament forms/tables, classes Tailwind CSS (opacité, gradients, dark mode, config), supprime ou modifie des fichiers de config (cache.php, session.php, tailwind.config.js), ou migre entre versions. Invoquer même en cas de doute — mieux vaut vérifier que de casser silencieusement."
 license: MIT
 metadata:
   author: humantocomputer
@@ -40,6 +40,24 @@ Avant de modifier du code dans ces domaines, lis le fichier de référence corre
 | Pagination (`paginate()` default) | `references/laravel-12-to-13.md` |
 | Queue jobs, déploiement, sérialisation | `references/laravel-12-to-13.md` |
 | Migration entre versions Laravel | Tous les fichiers pertinents selon les versions source→cible |
+
+## Audit de projet — première chose à faire sur un nouveau projet
+
+Quand tu arrives sur un projet Laravel dont tu ne connais pas l'historique, **ne te fie pas uniquement à la version dans `composer.json`**. Un projet en Laravel 13 peut encore contenir des vestiges de L10 qui causent des bugs silencieux (events dupliqués, rate limiting cassé, etc.).
+
+**Lis `references/project-audit.md`** qui contient la liste complète des patterns à scanner, classés par niveau de risque (CRITIQUE, HAUT, MOYEN). Chaque pattern indique :
+- Ce qu'il faut chercher (fichier, grep)
+- De quelle version c'est un vestige
+- Le risque concret
+- Le fichier de référence à lire
+
+Les vestiges les plus dangereux à détecter en priorité :
+1. `EventServiceProvider` avec `$listen` → events dupliqués
+2. `new static()` dans `boot()` → LogicException en L13
+3. `decayMinutes` dans rate limiters → 60x trop restrictif
+4. `diffInDays()` sans `(int)` → comparaisons float cassées
+5. `@tailwind base` dans CSS → directive supprimée TW v4
+6. `withConsecutive` dans tests → supprimé PHPUnit 10+
 
 ## Règles universelles
 

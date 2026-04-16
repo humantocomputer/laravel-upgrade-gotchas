@@ -42,9 +42,23 @@ git clone git@github.com:humantocomputer/laravel-upgrade-gotchas.git .claude/ski
 
 Le skill est automatiquement détecté par Claude Code au prochain lancement.
 
+## Audit de projet
+
+Quand Claude arrive sur un nouveau projet Laravel, il ne connaît pas l'historique de migration. Le skill inclut un **audit automatique** (`references/project-audit.md`) qui scanne le code pour détecter les vestiges d'anciennes versions :
+
+- `EventServiceProvider` avec `$listen` encore présent en L13 ? Events dupliqués.
+- `diffInDays()` sans cast `(int)` ? Comparaisons float cassées.
+- `@tailwind base` dans les CSS ? Directive supprimée en TW v4.
+- `withConsecutive` dans les tests ? Méthode supprimée PHPUnit 10+.
+
+Chaque vestige est classé par risque (CRITIQUE / HAUT / MOYEN) avec les commandes grep pour le détecter et le fichier de référence à consulter.
+
 ## Déclenchement
 
-Le skill s'active automatiquement quand Claude touche à :
+Le skill s'active automatiquement quand Claude :
+
+- **Arrive sur un nouveau projet Laravel** (audit des vestiges)
+- Touche à :
 
 - Events, listeners, service providers
 - Middleware, CSRF
